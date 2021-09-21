@@ -1,0 +1,217 @@
+---
+title: Synthetic Estimation of Joint Population Distributions
+author: Shiro Kuriwaki and Soichiro Yamauchi
+output: github_document
+---
+
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  cache = TRUE,
+  comment = "#>"
+)
+```
+
+
+Almost all survey weighting, whether MRP or not, face a data limitation that direct knowledge of the joint distributions of predictors (such as race, partisanship, and geography) are limited. There is a long tradition of statistical and applied work that can be grouped under the umbrella of synthetic population imputation: it seeks to expand the set of available interactions to poststratify on. The core idea has parallels in iterative proportional fitting (Deming and Stephan), ecological inference, and latent factorization methods. 
+
+The package [`synthjoint`](https://github.com/kuriwaki/synthjoint) (Kuriwaki and Yamauchi) implements key methods.
+
+```{r}
+library(synthjoint)
+```
+
+
+We can classify the main approaches by what outside data they leverage:
+
+| Main Idea              | Functions | Examples |
+|------------------------|-----------|----------|
+| Use Population Margins | `synth_prod()` | Leemann and Wasserfallen (2017) |
+| Use Microdata          | `synth_mlogit()` | Kastellec et al. (2015)|
+| Combine both           | `synth_smoothfix()` | Ghitza and Steiz (2020)|
+|                        | `synth_bmlogit()` |  Yamauchi (2021) |
+
+
+To setup:
+
+```{r setup, message = FALSE}
+library(ccesMRPprep)
+library(tidyverse)
+library(scales)
+library(furrr)
+plan(multisession, workers = 6)
+```
+
+
+## Validation of Multiple Methods
+
+We provide a simple set of functions to implement this. We extend the ACS table assisted by a survey model using a function called `synth_mlogit()`. This uses a multinomial logit to estimate predicted conditional probabilities. The package [`emlogit`](https://github.com/soichiroy/emlogit) by Yamauchi provides a fast implementation of the multinomial logit with a ECM algorithm with Polya-Gamma Augmentation. 
+
+
+```{r}
+acs_syn_mlogit <- synth_mlogit(race ~ female + age,
+                               microdata = cc18_NY,
+                               poptable = acs_race_NY,  
+                               area_var = "cd")
+```
+
+The `synthjoint` package provide two other approaches to estimating the joint -- these incorporate another source of information, which is the margins that are available.
+
+```{r}
+race_margins <- collapse_table(acs_race_NY, area_var = "cd", X_vars = "race", 
+                               count_var = "count", new_name = "count")
+race_margins
+```
+
+Given this data that is simply the marginal distribution of race in each CD, one option is to simply take the product assuming independence
+
+```{r,warning=FALSE}
+acs_syn_prod <- synth_prod(race ~ female + age,
+                           poptable = acs_race_NY,
+                           newtable = race_margins,
+                           area_var = "cd")
+```
+
+A more sophisticated method is to combine these two sources of information: microdata and known outcome margins. Ghitza and Steitz did a two-step process, where they first did survey modeling to smooth cells and then fixed *those* margins to the known population margins.
+
+```{r}
+acs_syn_fix1 <- synth_smoothfix(race ~ female + age, 
+                               microdata = cc18_NY,
+                               poptable = acs_race_NY, 
+                               fix_to = race_margins,
+                               area_var = "cd")
+```
+
+Yamauchi [developed](https://github.com/soichiroy/bmlogit) a multinomial logit that simultaneously imposes the same sort of balancing constraint. The benefit of this method is that the constraint is applied simultaneously with the estimation: the rake weighting does not nullify the survey data, and the tolerance range can be controlled.
+
+```{r, warning=FALSE}
+acs_syn_fix2 <- synth_bmlogit(race ~ female + age, 
+                               microdata = cc18_NY,
+                               poptable = acs_race_NY, 
+                               fix_to = race_margins,
+                               area_var = "cd")
+```
+
+The benefit of this example is that we can examine how our estimated counts of this synthetic table compared with the actual values of the joint distribution. Here is a scatter plot comparing the counts. Each point represents a cell: [14 congressional districts] x [2 gender categories] x [5 age categories] x [6 race categories].
+
+```{r synth_validation, echo = FALSE, message=FALSE,warning=FALSE, fig.height=3.5, fig.width=7}
+
+syn_val <- select(acs_syn_prod, cd, female, age, race, count_rake = count) %>% 
+  left_join(rename(acs_syn_mlogit, count_smooth = count),
+            by = c("cd", "female", "age", "race")) %>%
+  left_join(rename(acs_syn_fix1, count_smoothfix = count),
+            by = c("cd", "female", "age", "race")) %>%
+  left_join(rename(acs_syn_fix2, count_bmlogit = count),
+            by = c("cd", "female", "age", "race")) %>%
+  left_join(count(acs_race_NY, cd, female, race, age, wt = count, name = "count_truth"),
+            by = c("cd", "female", "age", "race")) %>% 
+  select(cd, female, age, race, matches("count_"))
+
+syn_val_long <- syn_val %>% 
+  pivot_longer(c(count_rake, count_smooth, count_smoothfix, count_bmlogit), 
+               names_to = "method",
+               values_to = "estimate",
+               names_prefix = "count_") %>% 
+  mutate(method = recode_factor(
+    method, 
+    smooth = "Survey Model\n(synth_mlogit)", 
+    rake = "Simple Product\n(synth_prod)",
+    smoothfix = "Survey + Fix to Outcome\n(synth_smoothfix)",
+    bmlogit = "Simultaneous Constraint\n(synth_bmlogit)"))
+
+syn_val_long %>% 
+  ggplot(aes(count_truth, estimate, color = race)) +
+  facet_wrap(~ method, nrow = 1) +
+  geom_abline(linetype = "dashed") +
+  geom_point(size = 0.5, alpha = 0.5) +
+  theme_bw() +
+  coord_equal() +
+  scale_x_continuous(labels = comma) +
+  scale_y_continuous(labels = comma) +
+  labs(x = "True Joint Table Count",
+       y = "Estimate",
+       color = "Race/Ethnicity of Cell") +
+    theme(legend.position = "bottom", 
+        panel.grid = element_blank())
+```
+
+The first plot does not look great. The simple product does surprisingly well. It is after all perhaps not surprising that it is hard to estimate education from age bins and gender. The main difference seems to be that in all the other three cases, we are fixing outcomes to _CD-level_ education margins. `synth_bmlogit()` would do worse, for example, if we only fixed to the less granular _State-level_ margins.
+
+
+
+
+## Real Applications
+
+We have a age x gender x education table and a age x gender x race table, but not a four-way table. Here, we use the synthetic estimators to estimate this joint table.
+
+We know the margins of education in each congressional district in NY:
+
+
+```{r}
+educ_target <- count(acs_educ_NY, cd, educ, wt = count, name = "count")
+educ_target
+```
+
+Unfortunately, these will be collapsed statewide for now.
+
+For bmlogit and mlogit
+
+```{r, warning=FALSE, message=FALSE}
+# No constraint
+pop_svy <- synth_mlogit(educ ~ race + age + female,
+                        microdata = cc18_NY,
+                        poptable = acs_race_NY,
+                        area_var = "cd")
+
+# With constraint
+pop_bm <- synth_bmlogit(educ ~ race + age + female,
+                        microdata = cc18_NY,
+                        fix_to = educ_target,
+                        poptable = acs_race_NY,
+                        area_var = "cd")
+```
+Here we show the main estimates of the model, which are conditional probability given X strata. We fix to women and a CD, `NY-01` which is the tip of Long Island, New York (Lee Zeldin, R; 70% White).  The CD does not matter as long as the targets are at the state level the CDs do not matter.
+
+
+```{r mlogit_app_NY01, echo=FALSE, fig.height=5, fig.width=6.2}
+plot_tiles <- function(tbl, tit, show_cd = "NY-01") {
+  tbl %>% 
+  filter(cd == show_cd, female == 1) %>% 
+  mutate(educ = fct_inorder(educ), 
+         pct_fmt = percent(prZ_givenX, accuracy = 1),
+         age = fct_rev(age)) %>%  
+  ggplot(aes(y = age, x = educ, fill = prZ_givenX)) +
+  facet_wrap(~ race) + 
+  geom_tile(color = "white", size = 1) + 
+  scale_fill_viridis_b(end = 0.8) +
+  guides(fill = guide_bins(title.position = "top", keywidth = unit(2, "cm"))) +
+  geom_text(aes(label = pct_fmt), color = "white", size = 2) + 
+  theme_bw() +
+  theme(legend.position = "bottom",
+        plot.title = element_text(face = "bold", hjust = 0.5),
+        axis.text = element_text(color = "black"),
+        axis.text.x = element_text(angle = 90)) + 
+  labs(fill = "Pr(Education | Age, Race)",
+       title = tit,
+       y = NULL, x = NULL)
+}
+
+plot_tiles(pop_svy, "CCES Estimates (synth_mlogit), NY-01")
+```
+
+
+```{r bmlogit_app_NY01, echo=FALSE, fig.height=5, fig.width=6.2}
+plot_tiles(pop_bm, "CCES fixed to CD Education Margins, NY-01\n(synth_bmlogit)")
+```
+
+Recall that bmlogit balances to the _area_ level population targets if available, whereas there is no balancing in the mlogit, and both always use the entire microdata without subsetting to area.  So, the values should be somewhat different if subsetting to a different CD, like NY-14  (D, Ocasio-Cortez) where 49% of the population is Hispanic.
+
+```{r bmlogit_app_NY14, echo=FALSE, fig.height=5, fig.width=6.2}
+plot_tiles(pop_bm, show_cd = "NY-14", "CCES fixed to CD Education Margins, NY-14\n(synth_bmlogit)")
+```
+
+
+Whereas the values would be the same regardless of district in the mlogit implementation.
