@@ -1,7 +1,7 @@
 Package: synthjoint
 Type: Package
 Title: Estimating Joint Distributions Assisted by Survey Data
-Version: 0.0.0.99
+Version: 0.0.1
 Authors@R:
    c(person(given = "Soichiro",
            family = "Yamauchi",
@@ -33,6 +33,7 @@ Imports:
     stringr,
     furrr
 Remotes:
+    kuriwaki/ccesMRPprep,
     soichiroy/emlogit,
     soichiroy/bmlogit
 RoxygenNote: 7.1.1
