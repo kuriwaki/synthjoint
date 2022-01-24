@@ -4,13 +4,13 @@ Shiro Kuriwaki and Soichiro Yamauchi
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-Almost all survey weighting face a data limitation that direct knowledge
-of the joint distributions of predictors (such as race, partisanship,
-and geography) are limited. There is a long tradition of statistical and
-applied work that can be grouped under the umbrella of synthetic
-population imputation: it seeks to expand the set of available
-interactions to poststratify on. The core idea has parallels in
-iterative proportional fitting (Deming and Stephan, 1940), ecological
+Almost all survey adjustments face a practical data limitation: the
+joint population distributions of variables we adjust on (such as race,
+partisanship, and geography) are limited. There is a long tradition of
+statistical and applied work that can be grouped under the umbrella of
+synthetic population imputation that seeks to expand the set of
+available interactions to poststratify on. The core idea has parallels
+in iterative proportional fitting (Deming and Stephan, 1940), ecological
 inference, and latent factorization methods.
 
 The package [`synthjoint`](https://github.com/kuriwaki/synthjoint)

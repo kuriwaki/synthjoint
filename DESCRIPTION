@@ -13,8 +13,14 @@ Authors@R:
            role = c("aut","cre"),
            email = "shirokuriwaki@gmail.com",
            comment = c(ORCID = "0000-0002-5687-2647")))
-Description: This provides data loading, processing, and formatting functions for
-   a particular task: using CCES data for Multilevel Regression Post-stratification.
+Description: 
+   Almost all survey adjustments face a practical data limitation: the joint population 
+   distributions of variables we adjust on (such as race, partisanship, and geography) 
+   are limited. There is a long tradition of statistical and applied work that can be 
+   grouped under the umbrella of synthetic population imputation that seeks to expand 
+   the set of available interactions to poststratify on. 
+   This set of functions is currently used to interface with the ccesMRPprep package
+   (www.github.com/kuriwaki/ccesMRPprep).
    Model fitting and visualization of MRP itself is handled elsewhere. This package
    is focused on the preparation to get there. 
 Encoding: UTF-8
