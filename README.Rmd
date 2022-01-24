@@ -16,23 +16,33 @@ knitr::opts_chunk$set(
 ```
 
 
-Almost all survey weighting, whether MRP or not, face a data limitation that direct knowledge of the joint distributions of predictors (such as race, partisanship, and geography) are limited. There is a long tradition of statistical and applied work that can be grouped under the umbrella of synthetic population imputation: it seeks to expand the set of available interactions to poststratify on. The core idea has parallels in iterative proportional fitting (Deming and Stephan), ecological inference, and latent factorization methods. 
+Almost all survey weighting face a data limitation that direct knowledge of the joint distributions of predictors (such as race, partisanship, and geography) are limited. There is a long tradition of statistical and applied work that can be grouped under the umbrella of synthetic population imputation: it seeks to expand the set of available interactions to poststratify on. The core idea has parallels in iterative proportional fitting (Deming and Stephan, 1940), ecological inference, and latent factorization methods.  
 
-The package [`synthjoint`](https://github.com/kuriwaki/synthjoint) (Kuriwaki and Yamauchi) implements key methods.
+The package [`synthjoint`](https://github.com/kuriwaki/synthjoint) (Kuriwaki and Yamauchi) implements key methods related to this problem.
 
-```{r}
-library(synthjoint)
-```
+
+## Overview
 
 
 We can classify the main approaches by what outside data they leverage:
 
 | Main Idea              | Functions | Examples |
 |------------------------|-----------|----------|
-| Use Population Margins | `synth_prod()` | Leemann and Wasserfallen (2017) |
-| Use Microdata          | `synth_mlogit()` | Kastellec et al. (2015)|
-| Combine both           | `synth_smoothfix()` | Ghitza and Steiz (2020)|
-|                        | `synth_bmlogit()` |  Yamauchi (2021) |
+| Use Population Margins | `synth_prod()` | Leemann and Wasserfallen ([2017](https://doi.org/10.1111/ajps.12319)) |
+| Use Microdata          | `synth_mlogit()` | Kastellec et al. ([2015](http://dx.doi.org/10.1086/681261))|
+| Combine both           | `synth_smoothfix()` | Ghitza and Steiz ([2020](https://github.com/Catalist-LLC/unemployment/blob/master/deep_maps_20200804.pdf))|
+|                        | `synth_bmlogit()` |  Kuriwaki et al., ([2022](https://doi.org/10.31219/osf.io/mk9e6)), Yamauchi (2021) |
+
+A detailed explanation of how this works in a real example is at
+
+Kuriwaki, S., Ansolabehere, S., Dagonel, A., & Yamauchi, S. (2022). The Geography of Racially Polarized Voting: Calibrating Surveys at the District Level. https://doi.org/10.31219/osf.io/mk9e6
+
+## Setup
+
+
+```{r}
+library(synthjoint)
+```
 
 
 To setup:
