@@ -42,7 +42,7 @@ Remotes:
     kuriwaki/ccesMRPprep,
     soichiroy/emlogit,
     soichiroy/bmlogit
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Language: en-US
 Roxygen: list(markdown = TRUE)
 License: MIT + file LICENSE

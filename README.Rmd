@@ -44,6 +44,7 @@ Kuriwaki, S., Ansolabehere, S., Dagonel, A., & Yamauchi, S. (2022). The Geograph
 library(synthjoint)
 ```
 
+If you have trouble installing `emlogit` on a Mac due to lgfortran not being found, I recommend troubleshooting at <https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/>
 
 To setup:
 

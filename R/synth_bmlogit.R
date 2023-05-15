@@ -21,7 +21,6 @@
 #' @importFrom furrr future_map_dfr
 #' @importFrom dplyr progress_estimated select
 #' @importFrom tibble deframe
-#' @importFrom ccesMRPprep collapse_table
 #' @examples
 #'
 #' library(dplyr)

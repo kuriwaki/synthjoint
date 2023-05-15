@@ -15,7 +15,6 @@
 #'  the basis of the joint estimation.
 #'
 #' @importFrom dplyr full_join mutate
-#' @importFrom ccesMRPprep collapse_table
 #' @export
 #'
 #' @examples
