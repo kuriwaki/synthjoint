@@ -54,7 +54,7 @@
 #' @export
 #'
 #' @importFrom emlogit emlogit
-#' @importFrom dplyr bind_cols as_tibble count sym syms
+#' @importFrom dplyr bind_cols as_tibble count sym syms left_join select mutate matches
 #' @importFrom tidyr pivot_longer
 #' @importFrom stats complete.cases
 #'

@@ -19,7 +19,7 @@
 #'
 #' @importFrom bmlogit bmlogit
 #' @importFrom furrr future_map_dfr
-#' @importFrom dplyr progress_estimated select
+#' @importFrom dplyr progress_estimated select filter
 #' @importFrom tibble deframe
 #' @examples
 #'

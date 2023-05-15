@@ -136,8 +136,8 @@ rake_target <- function(formula,
               )
 
   # target
-  tgt_stacked <- bind_rows(Xs_agg, outcome_agg) %>%
-    arrange(!!sym(area_var), variable)
+  tgt_stacked <- dplyr::bind_rows(Xs_agg, outcome_agg) %>%
+    dplyr::arrange(!!sym(area_var), variable)
 
 
   # rake

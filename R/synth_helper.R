@@ -64,7 +64,7 @@ predict_longer <- function(fit, poptable, microdata, X_form, X_vars, area_var, c
                  values_to = "prZ_givenX") %>%
     mutate(prXZ = prX * prZ_givenX,
            !!sym(count_var) := !!sym(count_var)*prZ_givenX) %>%
-    relocate(!!sym(count_var), .after = last_col())
+    dplyr::relocate(!!sym(count_var), .after = last_col())
 
   # if original factor, make it back into a factor
   # (it was deconstructed in model.matrix)
