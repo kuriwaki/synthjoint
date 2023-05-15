@@ -29,9 +29,18 @@ We can classify the main approaches by what outside data they leverage:
 
 A detailed explanation of how this works in a real example is at
 
-Kuriwaki, S., Ansolabehere, S., Dagonel, A., & Yamauchi, S. (2022). The
-Geography of Racially Polarized Voting: Calibrating Surveys at the
-District Level. <https://doi.org/10.31219/osf.io/mk9e6>
+> Kuriwaki, S., Ansolabehere, S., Dagonel, A., & Yamauchi, S. (2022).
+> The Geography of Racially Polarized Voting: Calibrating Surveys at the
+> District Level. *Forthcoming, American Political Science Review.*
+> <https://doi.org/10.31219/osf.io/mk9e6>.
+
+The following is a related dataverse deposit of the outcome data. The
+`poststrat_synth.tab` is created from `synthjont` as described in the
+APSR article.
+
+> Kuriwaki et al., 2022, “Vote Choice and Population Size by Geography,
+> Demographics, and Turnout”, <https://doi.org/10.7910/DVN/MAZNJ6>,
+> Harvard Dataverse, V3
 
 ## Setup
 
@@ -39,11 +48,15 @@ District Level. <https://doi.org/10.31219/osf.io/mk9e6>
 library(synthjoint)
 ```
 
+If you have trouble installing `emlogit` on a Mac due to lgfortran not
+being found, I recommend troubleshooting at
+<https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/>
+
 To setup:
 
 ``` r
-library(ccesMRPprep)
 library(tidyverse)
+library(ccesMRPprep) # need for the microdata cc18_NY
 library(scales)
 library(furrr)
 plan(multisession, workers = 6)
@@ -87,7 +100,7 @@ race_margins
 #>  8 NY-02 Black            52312
 #>  9 NY-02 Hispanic        116653
 #> 10 NY-02 Asian            17395
-#> # … with 152 more rows
+#> # ℹ 152 more rows
 ```
 
 Given this data that is simply the marginal distribution of race in each
@@ -166,7 +179,7 @@ educ_target
 #>  8 NY-02 Post-Grad     71094
 #>  9 NY-03 HS or Less   138929
 #> 10 NY-03 Some College 127003
-#> # … with 98 more rows
+#> # ℹ 98 more rows
 ```
 
 Unfortunately, these will be collapsed statewide for now.
@@ -193,6 +206,12 @@ probability given X strata. We fix to women and a CD, `NY-01` which is
 the tip of Long Island, New York (Lee Zeldin, R; 70% White). The CD does
 not matter as long as the targets are at the state level the CDs do not
 matter.
+
+    #> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    #> ℹ Please use `linewidth` instead.
+    #> This warning is displayed once every 8 hours.
+    #> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    #> generated.
 
 ![](README_files/figure-gfm/mlogit_app_NY01-1.png)<!-- -->
 

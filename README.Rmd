@@ -35,7 +35,11 @@ We can classify the main approaches by what outside data they leverage:
 
 A detailed explanation of how this works in a real example is at
 
-Kuriwaki, S., Ansolabehere, S., Dagonel, A., & Yamauchi, S. (2022). The Geography of Racially Polarized Voting: Calibrating Surveys at the District Level. https://doi.org/10.31219/osf.io/mk9e6
+> Kuriwaki, S., Ansolabehere, S., Dagonel, A., & Yamauchi, S. (2022). The Geography of Racially Polarized Voting: Calibrating Surveys at the District Level. _Forthcoming, American Political Science Review._ https://doi.org/10.31219/osf.io/mk9e6. 
+
+The following is a related dataverse deposit of the outcome data. The `poststrat_synth.tab` is created from `synthjont` as described in the APSR article.
+
+> Kuriwaki et al., 2022, "Vote Choice and Population Size by Geography, Demographics, and Turnout", https://doi.org/10.7910/DVN/MAZNJ6, Harvard Dataverse, V3
 
 ## Setup
 
@@ -44,12 +48,13 @@ Kuriwaki, S., Ansolabehere, S., Dagonel, A., & Yamauchi, S. (2022). The Geograph
 library(synthjoint)
 ```
 
+If you have trouble installing `emlogit` on a Mac due to lgfortran not being found, I recommend troubleshooting at <https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/>
 
 To setup:
 
 ```{r setup, message = FALSE}
-library(ccesMRPprep)
 library(tidyverse)
+library(ccesMRPprep) # need for the microdata cc18_NY
 library(scales)
 library(furrr)
 plan(multisession, workers = 6)

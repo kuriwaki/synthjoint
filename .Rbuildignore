@@ -1,7 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
+^README_files$
 ^\.ccache$
 ^\.github$
 ^tic\.R$
 ^LICENSE\.md$
+^data-raw$

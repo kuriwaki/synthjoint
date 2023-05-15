@@ -1,7 +1,7 @@
 Package: synthjoint
 Type: Package
 Title: Estimating Joint Distributions Assisted by Survey Data
-Version: 0.0.1
+Version: 0.0.2
 Authors@R:
    c(person(given = "Soichiro",
            family = "Yamauchi",
@@ -28,13 +28,12 @@ LazyData: true
 Depends: 
     R (>= 2.10),
 Imports:
+    rlang,
     tibble,
-    magrittr,
     Formula,
     emlogit (>= 0.1.2),
     bmlogit (>= 0.0.3),
     dplyr (>= 1.0.0),
-    ccesMRPprep (>= 0.1.10),
     tidyr,
     stringr,
     furrr
@@ -42,11 +41,12 @@ Remotes:
     kuriwaki/ccesMRPprep,
     soichiroy/emlogit,
     soichiroy/bmlogit
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Language: en-US
 Roxygen: list(markdown = TRUE)
 License: MIT + file LICENSE
 URL: https://www.github.com/kuriwaki/synthjoint
 BugReports: http://github.com/kuriwaki/synthjoint/issues
 Suggests: 
-    tidyverse
+    tidyverse,
+    ccesMRPprep

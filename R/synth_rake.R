@@ -15,7 +15,7 @@
 #'  the basis of the joint estimation.
 #'
 #' @importFrom dplyr full_join mutate
-#' @importFrom ccesMRPprep collapse_table
+#' @importFrom rlang :=
 #' @export
 #'
 #' @examples
@@ -68,7 +68,7 @@ synth_prod <- function(formula,
   N_area %>% # |A|
     full_join(X_p_df, by = area_var) %>% # |X1| * .... |X{K-1}|
     full_join(X_t_df, by = area_var) %>% # * |XK|
-    mutate(!!sym(count_var) := N_area * pr_Xs * pr_outcomes)
+    mutate(!!sym(count_var) := .data$N_area * .data$pr_Xs * .data$pr_outcomes)
 }
 
 
@@ -80,7 +80,6 @@ synth_prod <- function(formula,
 #'
 #' @importFrom dplyr full_join mutate
 #' @importFrom stringr str_c
-#' @importFrom ccesMRPprep collapse_table
 #'
 #' @returns A long table that, for each districts, list the target distribution
 #'  of the outcome (`variable = "outcome"`) and the cell of the known Xs (`variable = "Xs`).
@@ -121,7 +120,7 @@ rake_target <- function(formula,
     transmute(!!sym(area_var),
               variable = "Xs",
               label = str_c(!!!syms(X_vars), sep = "_"),
-              proportion
+              proportion = .data$proportion
               )
 
 
@@ -134,12 +133,12 @@ rake_target <- function(formula,
     transmute(!!sym(area_var),
               variable = "outcome",
               label = !!sym(outcome_var),
-              proportion
+              "proportion" = .data$proportion
               )
 
   # target
-  tgt_stacked <- bind_rows(Xs_agg, outcome_agg) %>%
-    arrange(!!sym(area_var), variable)
+  tgt_stacked <- dplyr::bind_rows(Xs_agg, outcome_agg) %>%
+    dplyr::arrange(!!sym(area_var), variable)
 
 
   # rake
@@ -183,6 +182,6 @@ rake_spf <- function(outcome_var,
     transmute(
       !!!syms(area_var),
       !!sym(outcome_var),
-      correction = pr_outcome_tgt / pr_outcome_data
+      "correction" = .data$pr_outcome_tgt / .data$pr_outcome_data
     )
 }

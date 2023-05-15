@@ -19,9 +19,8 @@
 #'
 #' @importFrom bmlogit bmlogit
 #' @importFrom furrr future_map_dfr
-#' @importFrom dplyr progress_estimated select
+#' @importFrom dplyr progress_estimated select filter
 #' @importFrom tibble deframe
-#' @importFrom ccesMRPprep collapse_table
 #' @examples
 #'
 #' library(dplyr)
@@ -65,7 +64,7 @@ synth_bmlogit <- function(formula,
 
   # microdata ----
   # ys (in microdata)
-  y_m_mat <- model.matrix(outcome_form, microdata)
+  y_m_mat <- stats::model.matrix(outcome_form, microdata)
 
   # binary data
   if (all(microdata[[outcome_var]] %in% c(0, 1))) {
@@ -77,12 +76,12 @@ synth_bmlogit <- function(formula,
     colnames(y_m_mat) <- levels(microdata[[outcome_var]])
 
   # Xs setup microdata
-  X_m_mat <- model.matrix(X_form, microdata)[, -1]
+  X_m_mat <- stats::model.matrix(X_form, microdata)[, -1]
 
   # population ----
   # Xs setup population table -- aggregate up to {X_1, ..., X_{K -1 }}
   X_p_df  <- collapse_table(poptable, area_var, X_vars, count_var, new_name = "N_X")
-  X_p_mat <- model.matrix(X_form, X_p_df)[, -1]
+  X_p_mat <- stats::model.matrix(X_form, X_p_df)[, -1]
 
   # Ns of the Xs
   X_counts_vec <- X_p_df[["N_X"]]
@@ -157,7 +156,7 @@ synth_bmlogit <- function(formula,
 
          # overwrite this to area subset
          X_p_df  <- filter(X_p_df, !!sym(area_var) == a)
-         X_p_mat <- model.matrix(X_form, X_p_df)[, -1]
+         X_p_mat <- stats::model.matrix(X_form, X_p_df)[, -1]
          X_counts_vec <- X_p_df[["N_X"]]
 
          # fit the model
