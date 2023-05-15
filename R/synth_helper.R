@@ -38,7 +38,6 @@ formula_parts <- function(formula) {
 #'  the fitted objects.
 #'
 #' @inheritParams synth_mlogit
-#' @importFrom ccesMRPprep collapse_table
 #' @keywords internal
 #'
 predict_longer <- function(fit, poptable, microdata, X_form, X_vars, area_var, count_var, outcome_var) {

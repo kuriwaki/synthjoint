@@ -79,7 +79,6 @@ synth_prod <- function(formula,
 #'
 #' @importFrom dplyr full_join mutate
 #' @importFrom stringr str_c
-#' @importFrom ccesMRPprep collapse_table
 #'
 #' @returns A long table that, for each districts, list the target distribution
 #'  of the outcome (`variable = "outcome"`) and the cell of the known Xs (`variable = "Xs`).
