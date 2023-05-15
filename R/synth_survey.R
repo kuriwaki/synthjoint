@@ -57,6 +57,7 @@
 #' @importFrom dplyr bind_cols as_tibble count sym syms left_join select mutate matches
 #' @importFrom tidyr pivot_longer
 #' @importFrom stats complete.cases
+#' @importFrom rlang :=
 #'
 #' @source
 #'  Jonathan P. Kastellec, Jeffrey R. Lax, Michael Malecki, and Justin H.
@@ -122,16 +123,16 @@ synth_mlogit <- function(formula,
 
 
   # ys (in microdata)
-  y_m_mat <- model.matrix(outcome_form, microdata)
+  y_m_mat <- stats::model.matrix(outcome_form, microdata)
   colnames(y_m_mat) <- levels(microdata[[outcome_var]])
 
   # Xs setup microdata
-  X_m_mat <- model.matrix(X_form, microdata)[, -1]
+  X_m_mat <- stats::model.matrix(X_form, microdata)[, -1]
 
   # Xs setup population table -- aggregate up to {A, X_1, ..., X_{K -1 }}
   X_p_df <- collapse_table(poptable, area_var, X_vars, count_var)
 
-  X_p_mat <- model.matrix(X_form, X_p_df)[, -1]
+  X_p_mat <- stats::model.matrix(X_form, X_p_df)[, -1]
 
 
   # fit model

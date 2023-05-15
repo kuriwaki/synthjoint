@@ -15,6 +15,7 @@
 #'  the basis of the joint estimation.
 #'
 #' @importFrom dplyr full_join mutate
+#' @importFrom rlang :=
 #' @export
 #'
 #' @examples
@@ -67,7 +68,7 @@ synth_prod <- function(formula,
   N_area %>% # |A|
     full_join(X_p_df, by = area_var) %>% # |X1| * .... |X{K-1}|
     full_join(X_t_df, by = area_var) %>% # * |XK|
-    mutate(!!sym(count_var) := N_area * pr_Xs * pr_outcomes)
+    mutate(!!sym(count_var) := .data$N_area * .data$pr_Xs * .data$pr_outcomes)
 }
 
 
@@ -119,7 +120,7 @@ rake_target <- function(formula,
     transmute(!!sym(area_var),
               variable = "Xs",
               label = str_c(!!!syms(X_vars), sep = "_"),
-              proportion
+              proportion = .data$proportion
               )
 
 
@@ -132,7 +133,7 @@ rake_target <- function(formula,
     transmute(!!sym(area_var),
               variable = "outcome",
               label = !!sym(outcome_var),
-              proportion
+              "proportion" = .data$proportion
               )
 
   # target
@@ -181,6 +182,6 @@ rake_spf <- function(outcome_var,
     transmute(
       !!!syms(area_var),
       !!sym(outcome_var),
-      correction = pr_outcome_tgt / pr_outcome_data
+      "correction" = .data$pr_outcome_tgt / .data$pr_outcome_data
     )
 }

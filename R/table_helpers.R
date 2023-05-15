@@ -19,6 +19,7 @@
 #'
 #' @importFrom dplyr count transmute group_by ungroup rename %>%
 #' @importFrom tidyr complete
+#' @importFrom rlang :=
 #' @export
 #'
 #' @examples
