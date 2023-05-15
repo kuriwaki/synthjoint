@@ -17,7 +17,7 @@ collapse_table(
 \arguments{
 \item{poptable}{The population table, collapsed in terms of counts. Must contain
 all variables in the RHS of \code{formula}, as well as the variables specified in
-\code{area_var} and \code{count_var} below.}
+\code{area_var} and \code{count_var} below. See \code{ccesMRPprep::get_acs_cces()}}
 
 \item{area_var}{A character vector of the area of interest.}
 

@@ -2,7 +2,7 @@
 #'
 #' @param poptable The population table, collapsed in terms of counts. Must contain
 #'  all variables in the RHS of `formula`, as well as the variables specified in
-#'   `area_var` and `count_var` below.
+#'   `area_var` and `count_var` below. See `ccesMRPprep::get_acs_cces()`
 #' @param area_var A character vector of the area of interest.
 #' @param count_var A character variable that specifies which variable in `poptable`
 #'  indicates the count
@@ -17,7 +17,7 @@
 #' @returns A dataframe of counts or proportions. By design, it will include the
 #'  variables `area_var`, `X_vars`, and whatever is specified in `new_name`.
 #'
-#' @importFrom dplyr count transmute group_by ungroup rename
+#' @importFrom dplyr count transmute group_by ungroup rename %>%
 #' @importFrom tidyr complete
 #' @export
 #'
