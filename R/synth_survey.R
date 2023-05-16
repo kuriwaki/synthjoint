@@ -116,9 +116,9 @@ synth_mlogit <- function(formula,
 
   # Drop NAs
   microdata <- select(microdata, !!!syms(c(outcome_var, X_vars)))
-  if (nrow(microdata) > sum(complete.cases(microdata))) {
+  if (nrow(microdata) > sum(stats::complete.cases(microdata))) {
     warning("NAs in the microdata -- dropping data")
-    microdata <- filter(microdata, complete.cases(microdata))
+    microdata <- filter(microdata, stats::complete.cases(microdata))
   }
 
 
